@@ -20,16 +20,17 @@ class ToyRobustEnv(gym.Env):
         self.S = S
         self.A = A
         self.B = B
+
+        print(B)
+        import pdb; pdb.set_trace()
         self.init_seed = seed
 
         self.current_full_state = np.zeros(N)
         self.random_stream = np.random.RandomState()
 
-        self.parameter_ranges = np.array([
-                # (0.5, 1.0)      # p11a for each arm
-                (0.5, 0.75)      # p11a for each arm
-        ]*N)
-
+        self.parameter_ranges = np.array(
+                [(0.5, 0.75)]*(N//2)      # p11a for each arm
+              + [(0.3, 0.5)]*(N//2))
         self.seed(seed=seed)
         self.T, self.R, self.C = self.get_experiment()
 
@@ -37,25 +38,22 @@ class ToyRobustEnv(gym.Env):
 
 
     def get_experiment(self):
-
-
         T = np.zeros((self.N,self.S,self.A,self.S))
 
         T_i = [
             [
-                [0.5, 0.5], # p^p_00, p^p_01
+                [0.5, 0.5], # p^p_00, p^p_01  # p = passive
                 [0.5, 0.5] # p^p_10, p^p_11
             ],
             [
-                [0.5, 0.5], # p^a_00, p^a_01
+                [0.5, 0.5], # p^a_00, p^a_01  # a = active
                 [-1,   -1] # p^a_10, p^a_11 -- these will be set by the parameter
-            ]
+            ]  # TODO: do we want p^a_10 to be set by param and not fixed?
 
         ]
 
         for i in range(self.N):
             T[i] = T_i
-
         R = np.array([[0, 1] for _ in range(self.N)])
 
         C = np.arange(self.A)
@@ -63,6 +61,8 @@ class ToyRobustEnv(gym.Env):
 
         return T, R, C
 
+    def sample_parameter_ranges(self):
+        return np.copy(self.parameter_ranges)
 
     # a_agent should correspond to an action respresented in the transition matrix
     # a_nature should be a probability in the range specified by self.parameter_ranges
@@ -81,9 +81,9 @@ class ToyRobustEnv(gym.Env):
         next_full_state = np.zeros(self.N, dtype=int)
         rewards = np.zeros(self.N)
         for i in range(self.N):
-            current_arm_state=int(self.current_full_state[i])
-            next_arm_state=np.argmax(self.random_stream.multinomial(1, self.T[i, current_arm_state, int(a_agent[i]), :]))
-            next_full_state[i]=next_arm_state
+            current_arm_state = int(self.current_full_state[i])
+            next_arm_state = np.argmax(self.random_stream.multinomial(1, self.T[i, current_arm_state, int(a_agent[i]), :]))
+            next_full_state[i] = next_arm_state
             rewards[i] = self.R[i, next_arm_state]
 
         self.current_full_state = next_full_state
@@ -286,9 +286,9 @@ class ARMMANRobustEnv_Old(gym.Env):
         next_full_state = np.zeros(self.N, dtype=int)
         rewards = np.zeros(self.N)
         for i in range(self.N):
-            current_arm_state=int(self.current_full_state[i])
-            next_arm_state=np.argmax(self.random_stream.multinomial(1, self.T[i, current_arm_state, int(a_agent[i]), :]))
-            next_full_state[i]=next_arm_state
+            current_arm_state = int(self.current_full_state[i])
+            next_arm_state = np.argmax(self.random_stream.multinomial(1, self.T[i, current_arm_state, int(a_agent[i]), :]))
+            next_full_state[i] = next_arm_state
             rewards[i] = self.R[i, next_arm_state]
 
         self.current_full_state = next_full_state

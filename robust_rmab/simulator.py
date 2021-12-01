@@ -482,6 +482,7 @@ def simulateAdherence(N, L, T, R, C, B, policy_option, start_state, seedbase=Non
             rl_info['model'] =  model
 
     print('Running simulation w/ policy: %s'%policy_option)
+
     if policy_option in index_policies:
 
         lambdas = np.zeros((N,C.shape[0]))
@@ -548,7 +549,8 @@ def simulateAdherence(N, L, T, R, C, B, policy_option, start_state, seedbase=Non
             raise ValueError('bad num actions')
         # print(policy_option, state_log[:,t-1])
         # print(policy_option, actions)
-
+        # if policy_option == 6:
+        #     import pdb; pdb.set_trace()
 
         next_state, r, d, _ = env.step(actions)
         ep_ret += r.sum()
@@ -854,7 +856,7 @@ if __name__=="__main__":
         R = env.R
         C = env.C
 
-        nature_actions = [0.75,0.75]
+        nature_actions = [0.5] * N
 
         env = RobustEnvWrapper(env, nature_actions)
 

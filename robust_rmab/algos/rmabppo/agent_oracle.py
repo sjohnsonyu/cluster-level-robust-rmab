@@ -202,6 +202,9 @@ class AgentOracle:
         if data == 'sis':
             self.env_fn = lambda : SISRobustEnv(N,B,pop_size,seed)
 
+        if data == 'toy_robust':
+            self.env_fn = lambda : ToyRobustEnv(N,B,seed)
+
         self.actor_critic=core.MLPActorCriticRMAB
         self.agent_kwargs=agent_kwargs
 
@@ -697,7 +700,8 @@ if __name__ == '__main__':
                                     'circulant', 
                                     'armman',
                                     'counterexample',
-                                    'sis'
+                                    'sis',
+                                    'toy_robust'
                                 ])
 
     parser.add_argument('--robust_keyword', default='pess', type=str, help='Method for picking some T out of the uncertain environment',
@@ -782,6 +786,20 @@ if __name__ == '__main__':
         one_hot_encode = False
         non_ohe_obs_dim = 1
         state_norm = args.pop_size
+
+    if args.data == 'toy_robust':
+        # from robust_rmab.baselines.nature_baselines_simple import (
+        #             RandomNaturePolicy, PessimisticNaturePolicy, MiddleNaturePolicy, 
+        #             OptimisticNaturePolicy
+        #         )
+
+        # from robust_rmab.baselines.nature_baselines_counterexample import SampledRandomNaturePolicy
+        
+        from robust_rmab.baselines.nature_baselines_counterexample import   (
+                    RandomNaturePolicy, PessimisticNaturePolicy, MiddleNaturePolicy, 
+                    OptimisticNaturePolicy, DetermNaturePolicy, SampledRandomNaturePolicy
+                )
+        env_fn = lambda : ToyRobustEnv(N,B,seed)
 
 
     env = env_fn()
