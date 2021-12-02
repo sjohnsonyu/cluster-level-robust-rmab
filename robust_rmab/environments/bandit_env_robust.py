@@ -21,13 +21,13 @@ class ToyRobustEnv(gym.Env):
         self.A = A
         self.B = B
 
-        print(B)
-        import pdb; pdb.set_trace()
         self.init_seed = seed
 
         self.current_full_state = np.zeros(N)
         self.random_stream = np.random.RandomState()
 
+        # for simulation, we need N to be even in order to run the cluster comparison
+        assert (N % 2 == 0)
         self.parameter_ranges = np.array(
                 [(0.5, 0.75)]*(N//2)      # p11a for each arm
               + [(0.3, 0.5)]*(N//2))

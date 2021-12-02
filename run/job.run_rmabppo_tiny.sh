@@ -1,7 +1,7 @@
 data="toy_robust"
 save_string="ce_rmabppo_test"
 N=4
-B=1.0
+B=2.0
 robust_keyword="sample_random" # other option is "mid"
 n_train_epochs=20
 seed=0

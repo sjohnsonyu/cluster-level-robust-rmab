@@ -19,7 +19,7 @@ from robust_rmab.environments.bandit_env_robust import ToyRobustEnv, ARMMANRobus
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import os
-mpl.use('tkagg')
+# mpl.use('tkagg')
 
 
 class MA_RMABPPO_Buffer:

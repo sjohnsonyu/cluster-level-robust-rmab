@@ -856,7 +856,14 @@ if __name__=="__main__":
         R = env.R
         C = env.C
 
-        nature_actions = [0.5] * N
+        from robust_rmab.baselines.nature_baselines_counterexample import   (
+                    RandomNaturePolicy, PessimisticNaturePolicy, MiddleNaturePolicy, 
+                    OptimisticNaturePolicy, DetermNaturePolicy, SampledRandomNaturePolicy
+                )
+
+        # TODO load this in
+        nature_actions = nature_strategy.get_nature_action(None)
+        # nature_actions = [0.5] * N  # FIXME use a nature strategy to generate actions. Also can copy and paste stuff in
 
         env = RobustEnvWrapper(env, nature_actions)
 
