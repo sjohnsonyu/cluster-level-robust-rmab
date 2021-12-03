@@ -856,14 +856,27 @@ if __name__=="__main__":
         R = env.R
         C = env.C
 
+        # TODO: should we create our own module, or is it legit to just use the counterexample version?
         from robust_rmab.baselines.nature_baselines_counterexample import   (
                     RandomNaturePolicy, PessimisticNaturePolicy, MiddleNaturePolicy, 
                     OptimisticNaturePolicy, DetermNaturePolicy, SampledRandomNaturePolicy
                 )
 
-        # TODO load this in
+        nature_strategy = None
+        if args.robust_keyword == 'mid':
+            nature_strategy = MiddleNaturePolicy(sampled_nature_parameter_ranges, 0)
+            middle_nature_params = sampled_nature_parameter_ranges.mean(axis=-1)
+            T = env.get_T_for_a_nature(middle_nature_params)
+        if args.robust_keyword == 'sample_random':
+            nature_strategy = SampledRandomNaturePolicy(sampled_nature_parameter_ranges, 0)
+
+            # init the random strategy
+            nature_strategy.sample_param_setting(seedbase)
+            sampled_nature_params = nature_strategy.param_setting
+
+            T = env.get_T_for_a_nature(sampled_nature_params)
+        
         nature_actions = nature_strategy.get_nature_action(None)
-        # nature_actions = [0.5] * N  # FIXME use a nature strategy to generate actions. Also can copy and paste stuff in
 
         env = RobustEnvWrapper(env, nature_actions)
 
